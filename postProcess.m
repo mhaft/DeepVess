@@ -40,6 +40,13 @@ function [ ] = postProcess(pad_size, skelDilateR, vDilateR, boxFiltW, ...
 
 % Copyright 2017-2018, Mohammad Haft-Javaherian. (mh973@cornell.edu)
 
+%   References:
+%   -----------
+%   [1] Haft-Javaherian, M; Fang, L.; Muse, V.; Schaffer, C.B.; Nishimura, 
+%       N.; & Sabuncu, M. R. (2018) Deep convolutional neural networks for 
+%       segmenting 3D in vivo multiphoton images of vasculature in 
+%       Alzheimer disease mouse models. *arXiv preprint, arXiv*:1801.00880.
+
 % default parameters
 if nargin<1
     pad_size = 10; % padding to make room for dilation

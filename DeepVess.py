@@ -12,6 +12,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
+#   References:
+#   -----------
+#   [1] Haft-Javaherian, M; Fang, L.; Muse, V.; Schaffer, C.B.; Nishimura, 
+#       N.; & Sabuncu, M. R. (2018) Deep convolutional neural networks for 
+#       segmenting 3D in vivo multiphoton images of vasculature in 
+#       Alzheimer disease mouse models. *arXiv preprint, arXiv*:1801.00880.
 # =============================================================================
 
 from __future__ import print_function
