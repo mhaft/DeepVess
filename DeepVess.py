@@ -185,14 +185,14 @@ if isTrain:
     begin = start 
     trnSampleID=[]
     for ii in range(0,trnL.shape[0]):
-        for ij in range(corePadSize,trnL.shape[1]-corePadSize,2*corePadSize+1):
-            for ik in range(corePadSize,trnL.shape[2]-corePadSize,2*corePadSize+1):
+        for ij in range(corePadSize,trnL.shape[1]-corePadSize,2*corePadSize+1) + [trnL.shape[1]-corePadSize-1]:
+            for ik in range(corePadSize,trnL.shape[2]-corePadSize,2*corePadSize+1) + [trnL.shape[2]-corePadSize-1]:
                 trnSampleID.append(np.ravel_multi_index((ii,ij,ik,0),trnL.shape))
     shuffle(trnSampleID)
     tstSampleID=[]
     for ii in range(0,tstL.shape[0]):
-        for ij in range(corePadSize,tstL.shape[1]-corePadSize,2*corePadSize+1):
-            for ik in range(corePadSize,tstL.shape[2]-corePadSize,2*corePadSize+1):
+        for ij in range(corePadSize,tstL.shape[1]-corePadSize,2*corePadSize+1) + [tstL.shape[1]-corePadSize-1]:
+            for ik in range(corePadSize,tstL.shape[2]-corePadSize,2*corePadSize+1) + [tstL.shape[2]-corePadSize-1]:
                 tstSampleID.append(np.ravel_multi_index((ii,ij,ik,0),tstL.shape))
     shuffle(tstSampleID)
     x_tst,l_tst = get_batch(tst,tstL,corePadSize,tstSampleID[0:1000])
@@ -226,8 +226,8 @@ if isForward:
     vID=[]
     U=np.ndarray(imShape[0:3] + (2,))
     for ii in range(0,V.shape[0]):
-        for ij in range(corePadSize,V.shape[1]-corePadSize,2*corePadSize+1):
-            for ik in range(corePadSize,V.shape[2]-corePadSize,2*corePadSize+1):
+        for ij in range(corePadSize,V.shape[1]-corePadSize,2*corePadSize+1) + [V.shape[1]-corePadSize-1]:
+            for ik in range(corePadSize,V.shape[2]-corePadSize,2*corePadSize+1) + [V.shape[2]-corePadSize-1]:
                 vID.append(np.ravel_multi_index((ii,ij,ik,0),V.shape))
     for i in vID:
       x1 = get_batch3d_fwd(im,imShape,np.array(i))  
