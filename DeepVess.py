@@ -209,7 +209,7 @@ if isTrain:
     x_tst,l_tst = get_batch(tst, tstL, corePadSize, tstSampleID[0:1000])
     for epoch in range(nEpoch):
         shuffle(trnSampleID)
-        for i in range(np.ceil(len(trnSampleID) / 1000.)):
+        for i in range(np.int(np.ceil(len(trnSampleID) / 1000.))):
           x1,l1 = get_batch(trn, trnL, corePadSize, 
                             trnSampleID[(i * 1000):((i + 1) * 1000)])
           train_step.run(feed_dict={x: x1, y_: l1, keep_prob: 0.5})
