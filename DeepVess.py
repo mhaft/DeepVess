@@ -208,7 +208,8 @@ if isTrain:
     shuffle(tstSampleID)
     x_tst,l_tst = get_batch(tst, tstL, corePadSize, tstSampleID[0:1000])
     for epoch in range(nEpoch):
-        for i in range(np.ceil(len(trnSampleID) / 1000)):
+        shuffle(trnSampleID)
+        for i in range(np.ceil(len(trnSampleID) / 1000.)):
           x1,l1 = get_batch(trn, trnL, corePadSize, 
                             trnSampleID[(i * 1000):((i + 1) * 1000)])
           train_step.run(feed_dict={x: x1, y_: l1, keep_prob: 0.5})
@@ -237,20 +238,17 @@ if isForward:
     saver.restore(sess, "private/model-epoch29999.ckpt")
     print("Model restored.")
     vID=[]
-    U=np.ndarray(imShape[0:3] + (2,))
     for ii in range(0,V.shape[0]):
-        for ij in range(corePadSize, V.shape[1] - corePadSize, 
-                        2 * corePadSize + 1) + [V.shape[1] - corePadSize - 1]:
-            for ik in range(corePadSize, V.shape[2] - corePadSize, 
-                        2 * corePadSize + 1) + [V.shape[2] - corePadSize - 1]:
+        for ij in it.chain(range(corePadSize, V.shape[1] - corePadSize, 
+                        2 * corePadSize + 1), [V.shape[1] - corePadSize - 1]):
+            for ik in it.chain(range(corePadSize, V.shape[2] - corePadSize, 
+                        2 * corePadSize + 1), [V.shape[2] - corePadSize - 1]):
                 vID.append(np.ravel_multi_index((ii, ij, ik, 0), V.shape))
     for i in vID:
       x1 = get_batch3d_fwd(im, imShape, np.array(i))  
       y1 = np.reshape(y_conv.eval(feed_dict={x: x1, keep_prob: 1.0}),
                       ((2 * corePadSize + 1), (2 * corePadSize + 1), 2))
       r = np.unravel_index(i, V.shape)
-      U[r[0], (r[1] - corePadSize):(r[1] + corePadSize + 1), 
-            (r[2] -corePadSize):(r[2] + corePadSize + 1), :] = y1
       V[r[0], (r[1] - corePadSize):(r[1] + corePadSize + 1), 
             (r[2] - corePadSize):(r[2] + corePadSize + 1), 0] = np.argmax(y1, 
                                                                     axis=2)
