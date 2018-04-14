@@ -203,29 +203,29 @@ end
 
 % Fix the path of centerlines in Skel{1,:} to have straight centerlines,
 %   other wise they will be zig-zagged
-for i = 1:size(Skel,2)
-    temp = Skel{1,i};
-    if size(temp,1) < 4
+for i = 1:size(Skel, 2)
+    temp = Skel{1, i};
+    if size(temp, 1) < 4
         continue
     end
-    [D,I] = pdist2(temp, temp, 'euclidean', 'Smallest', 3);
-    A = zeros(size(temp,1));
-    for j = 1:size(temp,1)
+    [Di, I] = pdist2(temp, temp, 'euclidean', 'Smallest', 3);
+    A = zeros(size(temp, 1));
+    for j = 1:size(temp, 1)
         for k = 2:3
-            if D(k, j) <= sqrt(3)
+            if Di(k, j) <= sqrt(3)
                 A(j,I(k, j)) = 1;
             end
         end
     end
-    A = single((A+A')>0);
+    A = single((A + A') > 0);
     BGobj = biograph(A);
-    [dist] = allshortestpaths(BGobj, 'Directed', false);
+    dist = allshortestpaths(BGobj, 'Directed', false);
     dist(isinf(dist)) = 0;
     [~, j] = max(dist(:));
     [S, T] = ind2sub(size(A), j(1));
     [~, path, ~] = shortestpath(BGobj, S, T);
     if ~isempty(path)
-        Skel{1,i} = temp(path,:);
+        Skel{1, i} = temp(path, :);
     end
 end
 
