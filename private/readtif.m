@@ -26,14 +26,15 @@ if nargin<1
 end
 info=imfinfo(fileName);
 % initiate the im
-im = zeros(info(1).Height, info(1).Width,info(1).SamplesPerPixel, ...
+im = zeros(info(1).Height, info(1).Width, info(1).SamplesPerPixel, ...
     size(info,1));
 
 for k = 1:size(info, 1)
    im(:, :, :, k) = imread(fileName, k); 
 end
-% convert to gray scale image in case the input file has color
-im=squeeze(mean(im,3));
+
+% convert the hyperstack to stack
+im = reshape(im, info(1).Height, info(1).Width, []);
 
 % change the class of im base on the Bit Depth in tif header
 if info(1).BitDepth==16
