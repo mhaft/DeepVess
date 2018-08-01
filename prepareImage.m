@@ -76,7 +76,7 @@ for i=1:numel(f)
     % remove the motion artifact and save the result
     inFile = outFile;
     outFile = [h5FileName(1:end-2), 'tif'];
-    tifMotionRemoval
+    im = tifMotionRemoval(outFile);
     % shift im to [-0.5,0.5]
     im = single(im);
     im=im / max(im(:)) - 0.5;
