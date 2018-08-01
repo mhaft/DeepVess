@@ -3,7 +3,7 @@ function [ imOut ] = imNormalize( im )
 % 
 % Copyright 2015-2018, Mohammad Haft-Javaherian. (mh973@cornell.edu)
 
-im2 = double(im) .* double(~imdilate(im==0, strel('sphere', 10)));
+im2 = double(im) .* double(~imdilate(im==0, strel('square', 10)));
 im2=double(im(and(im2>0,im2<max(im(:)))));
 p1=prctile(im2,1);
 p99=prctile(im2,99);
