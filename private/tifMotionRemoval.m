@@ -1,4 +1,4 @@
-function [  ] = tifMotionRemoval(inFile)
+function im = tifMotionRemoval(inFile)
 %Remove motion artifact using displacement method for each slice based on
 %   the previous slice and then save the result with same file name and
 %   'noMotion-' prefix.
