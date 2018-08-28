@@ -81,9 +81,10 @@ disp(FileName)
 
 % post processing of V
 V=imboxfilt3(V,3)>0.5;
-for i=1:size(V,3)
-    V(:,:,i)=imfill(V(:,:,i),'hole');
-end
+% % Commented due to 2D capillary loop bug. Will be removed permanently in the next version.
+% for i=1:size(V,3)
+%     V(:,:,i)=imfill(V(:,:,i),'hole');
+% end
 V=single(imfill(imboxfilt3(single(V),3)>0.5,'hole'));
 
 % pad array to make space for dilation
