@@ -49,7 +49,12 @@ if len(sys.argv) > 1:
     inputData = sys.argv[1]
 else:
     inputData = raw_input("Enter h5 input file path (e.g. ../a.h5)> ")
-
+# batch size
+if len(sys.argv) > 2:
+    batch_size = int(sys.argv[2])
+else:
+    batch_size = 1000
+    
 # start the TF session
 sess = tf.InteractiveSession()
 #create placeholder for input and output nodes
@@ -124,16 +129,13 @@ def get_batch3d_fwd(im, Vshape, ID):
       based on the location of ID entries and core pad size. Note that the ID
       is based on no core pad.
   """
-  im_ = np.ndarray(shape=(ID.size, WindowSize[0], WindowSize[1], WindowSize[2], 
-                        WindowSize[3]), dtype=np.float32)
-  for i in range(ID.size):
-    r = np.unravel_index(ID,Vshape)
-    x = 0
-    y = 0
-    im_[i, :, :, :] = im[r[0]:(r[0] + WindowSize[0]), 
-        (r[1] + y):(r[1] + WindowSize[1] + y), 
-        (r[2] + x):(r[2] + WindowSize[2] + x), r[3]:(r[3] + WindowSize[3])]
-  return im_
+  im_=np.ndarray(shape=(len(ID),WindowSize[0], WindowSize[1], WindowSize[2]
+                        , WindowSize[3]),dtype=np.float32)  
+  for i in range(len(ID)):
+    r = np.unravel_index(ID[i],Vshape)
+    im_[i,:,:,:]=im[r[0]:r[0]+WindowSize[0],r[1]:r[1]+WindowSize[1],
+        r[2]:r[2]+WindowSize[2],r[3]:r[3]+WindowSize[3]]
+  return im_ 
 
 # Define the DeepVess Architecture
 
@@ -206,12 +208,12 @@ if isTrain:
                 tstSampleID.append(np.ravel_multi_index((ii, ij, ik, 0), 
                                                         tstL.shape))
     shuffle(tstSampleID)
-    x_tst,l_tst = get_batch(tst, tstL, corePadSize, tstSampleID[0:1000])
+    x_tst,l_tst = get_batch(tst, tstL, corePadSize, tstSampleID[0:batch_size])
     for epoch in range(nEpoch):
         shuffle(trnSampleID)
-        for i in range(np.int(np.ceil(len(trnSampleID) / 1000.))):
+        for i in range(np.int(np.ceil(len(trnSampleID) / batch_size))):
           x1,l1 = get_batch(trn, trnL, corePadSize, 
-                            trnSampleID[(i * 1000):((i + 1) * 1000)])
+                          trnSampleID[(i * batch_size):((i + 1) * batch_size)])
           train_step.run(feed_dict={x: x1, y_: l1, keep_prob: 0.5})
           if i%100 == 99: 
             train_accuracy = accuracy.eval(feed_dict={
@@ -221,9 +223,9 @@ if isTrain:
             end = time.time()
             print("epoch %d, step %d, training accuracy %g, test accuracy %g. "
                 "Elapsed time/sample is %e sec. %f hour to finish."%(epoch, i, 
-                train_accuracy, test_accuracy, (end - start) / 100000, 
-                ((nEpoch - epoch) * len(trnSampleID) / 1000 - i) 
-                * (end - start) / 360000))
+                train_accuracy, test_accuracy, (end - start) / 100000,
+                ((nEpoch - epoch) * len(trnSampleID) / batch_size - i) 
+                * (end - start) / 360000)) 
             file_log = open("model.log","a") 
             file_log.write("%d, %d, %g, %g, %f \n" % (epoch, i, train_accuracy, 
                                          test_accuracy, (end-begin) / 3600))       
@@ -244,17 +246,20 @@ if isForward:
             for ik in it.chain(range(corePadSize, V.shape[2] - corePadSize, 
                         2 * corePadSize + 1), [V.shape[2] - corePadSize - 1]):
                 vID.append(np.ravel_multi_index((ii, ij, ik, 0), V.shape))
-    for i in vID:
-      x1 = get_batch3d_fwd(im, imShape, np.array(i))  
-      y1 = np.reshape(y_conv.eval(feed_dict={x: x1, keep_prob: 1.0}),
-                      ((2 * corePadSize + 1), (2 * corePadSize + 1), 2))
-      r = np.unravel_index(i, V.shape)
-      V[r[0], (r[1] - corePadSize):(r[1] + corePadSize + 1), 
-            (r[2] - corePadSize):(r[2] + corePadSize + 1), 0] = np.argmax(y1, 
-                                                                    axis=2)
-      if i%10000 == 9999:
-        print("step %d is done. " % (i))  
-    io.savemat(inputData[:-3] + '-V_fwd',{'V': 
-        np.transpose(np.reshape(V, imShape[0:3]), (2, 1, 0))})
-    print(inputData[:-3] + "V_fwd.mat is saved.") 
+    start = time.time() 
+    for i in range(np.int(np.ceil(len(vID) / batch_size))):
+      x1 = get_batch3d_fwd(im,imShape, vID[i*batch_size:(i+1)*batch_size])
+      y1 = np.reshape(y_conv.eval(feed_dict={x:x1,keep_prob: 1.0}),(-1, 
+                                    (2*corePadSize+1), (2*corePadSize+1),2))
+      for j in range(y1.shape[0]):
+          r=np.unravel_index(vID[i * batch_size + j], V.shape)
+          V[r[0],(r[1]-corePadSize):(r[1]+corePadSize+1),
+                (r[2]-corePadSize):(r[2]+corePadSize+1),0] = np.argmax(y1[j],axis=2)
+      if i%100 == 99:
+        end = time.time()
+        print("step %d is done.  %f min to finish." % (i, (end - start)
+               / 60 / (i + 1) * (np.int(np.ceil(len(vID) / batch_size)) - i - 1)))  
+    io.savemat(sys.argv[1][:-3] + '-V_fwd', {'V':np.transpose(np.reshape(V,
+               imShape[0:3]), (2, 1, 0))})
+    print(sys.argv[1][:-3] + '-V_fwd.mat is saved.') 
     
