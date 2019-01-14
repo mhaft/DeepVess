@@ -1,20 +1,23 @@
-function [ imOut ] = imNormalize( im )
+function [ imOut ] = imNormalize( im, saturated_prctile)
 % IMNORMALIZE Normalize an image by puting 1% at each end of spectrum
 % 
 % Copyright 2015-2018, Mohammad Haft-Javaherian. (mh973@cornell.edu)
 
-im2 = double(im) .* double(~imdilate(im==0, strel('square', 10)));
-im2=double(im(and(im2>0,im2<max(im(:)))));
-p1=prctile(im2,1);
-p99=prctile(im2,99);
-if p1==p99
-    p1=min(double(im(:)));
-    p99=max(double(im(:)));
-    if p1==p99
+if nargin < 2
+    saturated_prctile = [1, 99]; 
+end
+im = double(im);
+im2 = nonzeros(im .* (~imdilate(im==0, strel('square', 5))));
+p = prctile(im2, [saturated_prctile(1), saturated_prctile(2)]);
+if p(1) == p(2)
+    p(1) = min(im(:));
+    p(2) = max(im(:));
+    if p(1) == p(2)
+        imOut = nan;
         return
     end
 end
-imOut=(double(im)-p1+1)/(p99-p1+2);
-imOut(:)=min(1,max(0,imOut(:)));
+imOut = (im - p(1) + 1)/(p(2) - p(1) + 2);
+imOut(:) = min(1, max(0, imOut(:)));
 end
 
