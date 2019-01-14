@@ -23,6 +23,7 @@ Note that *prepareImage* and *postProcess* accepts arguments to avoid input requ
 >> help prepareImage
 >> help postProcess
 ```
+You can send me a sample image and I run DeepVess for you to see if this model works on your images.
 
 ## Publication
 * Haft-Javaherian, M; Fang, L.; Muse, V.; Schaffer, C.B.; Nishimura, N.; & Sabuncu, M. R. (2018) Deep convolutional neural networks for segmenting 3D in vivo multiphoton images of vasculature in Alzheimer disease mouse models. *arXiv preprint, [arXiv*:1801.00880](https://arxiv.org/abs/1801.00880) .
