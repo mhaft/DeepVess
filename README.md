@@ -1,5 +1,5 @@
 # DeepVess
-[***DeepVess***](https://arxiv.org/abs/1801.00880)  is a 3D CNN segmentation method with essential pre- and post-processing steps, to fully automate the vascular segmentation of 3D *in-vivo* MPM images of murine brain vasculature using [TensorFlow](https://github.com/tensorflow/tensorflow). 
+[***DeepVess***](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0213539)  is a 3D CNN segmentation method with essential pre- and post-processing steps, to fully automate the vascular segmentation of 3D *in-vivo* MPM images of murine brain vasculature using [TensorFlow](https://github.com/tensorflow/tensorflow). 
 
 ### How to use DeepVess
 
@@ -26,7 +26,8 @@ Note that *prepareImage* and *postProcess* accepts arguments to avoid input requ
 You can send me a sample image and I run DeepVess for you to see if this model works on your images.
 
 ## Publication
-* Haft-Javaherian, M; Fang, L.; Muse, V.; Schaffer, C.B.; Nishimura, N.; & Sabuncu, M. R. (2018) Deep convolutional neural networks for segmenting 3D in vivo multiphoton images of vasculature in Alzheimer disease mouse models. *arXiv preprint, [arXiv*:1801.00880](https://arxiv.org/abs/1801.00880) .
+
+* Haft-Javaherian, M., Fang, L., Muse, V., Schaffer, C. B., Nishimura, N., & Sabuncu, M. R. (2019). Deep convolutional neural networks for segmenting 3D in vivo multiphoton images of vasculature in Alzheimer disease mouse models. PloS one, 14(3), e0213539. [Open Access link](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0213539) .
 
 ## Contact
 * Mohammad Haft-Javaherian <mh973@cornell.edu>
