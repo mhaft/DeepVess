@@ -15,10 +15,10 @@
 #
 #   References:
 #   -----------
-#   [1] Haft-Javaherian, M; Fang, L.; Muse, V.; Schaffer, C.B.; Nishimura,
-#       N.; & Sabuncu, M. R. (2018) Deep convolutional neural networks for
-#       segmenting 3D in vivo multiphoton images of vasculature in
-#       Alzheimer disease mouse models. *arXiv preprint, arXiv*:1801.00880.
+#   [1] Haft-Javaherian M, Fang L, Muse V, Schaffer CB, Nishimura N, Sabuncu MR (2019)
+#       Deep convolutional neural networks for segmenting 3D in vivo multiphoton images
+#       of vasculature in Alzheimer disease mouse models. PLoS ONE 14(3): e0213539.
+#       https://doi.org/10.1371/journal.pone.0213539
 # =============================================================================
 
 from __future__ import print_function
