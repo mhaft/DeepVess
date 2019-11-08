@@ -22,6 +22,7 @@
 # =============================================================================
 
 from __future__ import print_function
+from builtins import input
 import numpy as np
 import tensorflow as tf
 from six.moves import range
@@ -48,7 +49,7 @@ nEpoch = 100
 if len(sys.argv) > 1:
     inputData = sys.argv[1]
 else:
-    inputData = raw_input("Enter h5 input file path (e.g. ../a.h5)> ")
+    inputData = input("Enter h5 input file path (e.g. ../a.h5)> ")
 # batch size
 if len(sys.argv) > 2:
     batch_size = int(sys.argv[2])
