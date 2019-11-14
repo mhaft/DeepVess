@@ -3,7 +3,7 @@
 
 ### How to use DeepVess
 
-First, see [Installing TensorFlow](https://www.tensorflow.org/get_started/os_setup.html) for instructions on how to install TensorFlow.
+First, see [Installing TensorFlow](https://www.tensorflow.org/get_started/os_setup.html) for instructions on how to install TensorFlow. 
 
 Second, run *prepareImage* in MATLAB. (See `Help prepareImage`)
 ```matlab
@@ -14,19 +14,28 @@ Third, run *DeepVess* in Terminal or Python. You can add the address of the outp
 ```shell 
 $ python DeepVess.py ../image3D.h5
 ```
+
 Finally, run *postProcess* in MATLAB.
 ```matlab
 >> postProcess()
 ```
+
 Note that *prepareImage* and *postProcess* accepts arguments to avoid input request. For more information look at their helps in MATLAB.
  ```matlab
 >> help prepareImage
 >> help postProcess
 ```
+
 You can send me a sample image and I run DeepVess for you to see if this model works on your images.
 
-## Publication
+## Requirements
+* [Python 3](https://www.python.org) (It's compatible with Python 2 as well)
+* [TensorFlow 1.14+](https://www.tensorflow.org) (With older version you may use [commit fee62a2](https://github.com/mhaft/DeepVess/tree/fee62a24ca2176027ab9d9c1c505f6340b59480d))
+* [Matlab](https://www.mathworks.com) 
+    * Image Processing Toolbox (if using motion removal in `prepareImage.m`)
+    * Bioinformatics Toolbox (if using Fix the path of centerlines to have straight centerlines in `postProcess.m`)
 
+## Publication
 * Haft-Javaherian, M., Fang, L., Muse, V., Schaffer, C. B., Nishimura, N., & Sabuncu, M. R. (2019). Deep convolutional neural networks for segmenting 3D in vivo multiphoton images of vasculature in Alzheimer disease mouse models. PloS one, 14(3), e0213539. [Open Access link](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0213539) .
 
 ## Contact
