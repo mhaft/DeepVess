@@ -273,6 +273,6 @@ if isForward:
             print("step %d is done.  %f min to finish." % (i, (end - start)
                                                            / 60 / (i + 1) * (
                                                                        np.int(np.ceil(len(vID) / batch_size)) - i - 1)))
-    io.savemat(sys.argv[1][:-3] + '-V_fwd.mat', {'V': np.transpose(np.reshape(V,
+    io.savemat(inputData[:-3] + '-V_fwd.mat', {'V': np.transpose(np.reshape(V,
                                                                           imShape[0:3]), (2, 1, 0))})
-    print(sys.argv[1][:-3] + '-V_fwd.mat is saved.')
+    print(inputData[:-3] + '-V_fwd.mat is saved.')
