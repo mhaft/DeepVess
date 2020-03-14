@@ -174,12 +174,12 @@ h_pool2_flat = tf.reshape(h_pool2, [-1, 1 * 5 * 5 * 64])
 h_fc1 = tf.nn.relu(tf.matmul(h_pool2_flat, W_fc1) + b_fc1)
 
 keep_prob = tf.compat.v1.placeholder(tf.float32)
-h_fc1_drop = tf.nn.dropout(h_fc1, 1 - (keep_prob))
+h_fc1_drop = tf.compat.v1.nn.dropout(h_fc1, rate= 1 - (keep_prob))
 
 W_fc2 = weight_variable([1024, 1 * 5 * 5 * 2])
 b_fc2 = bias_variable([1 * 5 * 5 * 2])
-h_fc1 = tf.matmul(h_fc1_drop, W_fc2) + b_fc2
-y_conv = tf.reshape(h_fc1, [-1, 1 * 5 * 5, 2])
+h_fc2 = tf.matmul(h_fc1_drop, W_fc2) + b_fc2
+y_conv = tf.reshape(h_fc2, [-1, 1 * 5 * 5, 2])
 
 # loss function over (TP U FN U FP)
 allButTN = tf.maximum(tf.argmax(input=y_conv, axis=2), tf.argmax(input=y_, axis=2))
