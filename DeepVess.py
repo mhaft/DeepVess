@@ -25,6 +25,7 @@ from __future__ import print_function
 
 from builtins import input
 import sys
+import os
 import time
 from random import shuffle
 import itertools as it
@@ -42,7 +43,8 @@ isForward = True
 # padSize is the padding around the central voxel to generate the field of view
 padSize = ((3, 3), (16, 16), (16, 16), (0, 0))
 WindowSize = np.sum(padSize, axis=1) + 1
-# pad Size aroung the central voxel to generate 2D region of interest
+
+# pad Size around the central voxel to generate 2D region of interest
 corePadSize = 2
 # number of epoch to train
 nEpoch = 100
@@ -83,7 +85,7 @@ if isTrain:
     trn = np.pad(trn, padSize, 'symmetric')
 if isForward:
     im = np.pad(im, padSize, 'symmetric')
-    V = np.ndarray(shape=(imShape), dtype=np.float32)
+    V = np.ndarray(shape=imShape, dtype=np.float32)
 print("Data loaded.")
 
 
@@ -239,17 +241,16 @@ if isTrain:
                                                                              ((nEpoch - epoch) * len(
                                                                                  trnSampleID) / batch_size - i)
                                                                              * (end - start) / 360000))
-                file_log = open("model.log", "a")
-                file_log.write("%d, %d, %g, %g, %f \n" % (epoch, i, train_accuracy,
-                                                          test_accuracy, (end - begin) / 3600))
-                file_log.close()
+                with open("model.log", "a") as file_log:
+                    file_log.write("%d, %d, %g, %g, %f \n" % (epoch, i, train_accuracy,
+                                                              test_accuracy, (end - begin) / 3600))
                 start = time.time()
         if epoch % 10 == 9:
-            save_path = saver.save(sess, "model-epoch" + str(epoch) + ".ckpt")
+            save_path = saver.save(sess, os.path.join('private', 'model-epoch' + str(epoch) + '.ckpt'))
             print("epoch %d, Model saved in file: %s" % (epoch, save_path))
 
 if isForward:
-    saver.restore(sess, "private/model-epoch29999.ckpt")
+    saver.restore(sess, os.path.join('private', 'model-epoch29999.ckpt'))
     print("Model restored.")
     vID = []
     for ii in range(0, V.shape[0]):
