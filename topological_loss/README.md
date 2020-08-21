@@ -15,4 +15,4 @@
 * Mohammad Haft-Javaherian <mh973@cornell.edu>, <haft@csial.mit.edu>
 
 ## License
-[Apache License 2.0](LICENSE)
+[Apache License 2.0](../LICENSE)
