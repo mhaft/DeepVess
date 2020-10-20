@@ -41,7 +41,7 @@ You can send me a sample image and I run DeepVess for you to see if this model w
 * Haft-Javaherian, M., Fang, L., Muse, V., Schaffer, C. B., Nishimura, N., & Sabuncu, M. R. (2019). Deep convolutional neural networks for segmenting 3D in vivo multiphoton images of vasculature in Alzheimer disease mouse models. PloS one, 14(3), e0213539. [Open Access link](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0213539).
 * Haft-Javaherian, M., Villiger, M., Schaffer, C. B., Nishimura, N., Golland, P., & Bouma, B. E. (2020). A Topological Encoding Convolutional Neural Network for Segmentation of 3D Multiphoton Images of Brain Vasculature Using Persistent Homology. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition Workshops (pp. 990-991). [Open Access link](http://openaccess.thecvf.com/content_CVPRW_2020/html/w57/Haft-Javaherian_A_Topological_Encoding_Convolutional_Neural_Network_for_Segmentation_of_3D_CVPRW_2020_paper.html).
 ## Contact
-* Mohammad Haft-Javaherian <mh973@cornell.edu>, <haft@csial.mit.edu>
+* Mohammad Haft-Javaherian <mh973@cornell.edu>, <haft@csail.mit.edu>
 
 ## License
 [Apache License 2.0](LICENSE)
