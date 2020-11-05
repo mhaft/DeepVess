@@ -50,20 +50,13 @@ isForward = True
 # padSize is the padding around the central voxel to generate the field of view
 padSize = ((3, 3), (48, 49), (48, 49), (0, 0))
 WindowSize = np.sum(padSize, axis=1) + 1
-# pad Size aroung the central voxel to generate 2D region of interest
+# pad Size around the central voxel to generate 2D region of interest
 corePadSize = 10
 # number of epoch to train
 nEpoch = int(sys.argv[3])
-# The input h5 file location
-if len(sys.argv) > 1:
-    inputData = sys.argv[1]
-else:
-    inputData = input("Enter h5 input file path (e.g. ../a.h5)> ")
-# batch size
-if len(sys.argv) > 2:
-    batch_size = int(sys.argv[2])
-else:
-    batch_size = 1000
+# The input h5 file location and batch size
+inputData = sys.argv[1] if len(sys.argv) > 1 else input("Enter h5 input file path (e.g. ../a.h5)> ")
+batch_size = int(sys.argv[2]) if len(sys.argv) > 2 else 1000
 
 # Import Data
 f = h5py.File(inputData, 'r')
@@ -99,10 +92,10 @@ class Dataset(data.Dataset):
         if self.isTrain:
             self.offset = np.random.randint(0, 2 * self.corePadSize, 2)
         for i in range(0, imShape[0]):
-            for j in it.chain(range(self.corePadSize+ self.offset[0], self.imShape[1] - self.corePadSize, 2 * self.corePadSize + 1),
-                              [self.imShape[1] - self.corePadSize - 1]):
-                for k in it.chain(range(self.corePadSize+ self.offset[1], self.imShape[2] - self.corePadSize, 2 * self.corePadSize + 1),
-                                  [self.imShape[2] - self.corePadSize - 1]):
+            for j in it.chain(range(self.corePadSize+ self.offset[0], self.imShape[1] - self.corePadSize,
+                                    2 * self.corePadSize + 1), [self.imShape[1] - self.corePadSize - 1]):
+                for k in it.chain(range(self.corePadSize+ self.offset[1], self.imShape[2] - self.corePadSize,
+                                        2 * self.corePadSize + 1), [self.imShape[2] - self.corePadSize - 1]):
                     self.sampleID.append(np.ravel_multi_index((i, j, k, 0), self.imShape))
         if self.isTrain:
             shuffle(self.sampleID)
@@ -112,8 +105,6 @@ class Dataset(data.Dataset):
 
     def __getitem__(self, index):
         """Generates one sample of data"""
-        # if index == 0 and self.isTrain:
-        #     self.__shuffle__()
         ID = self.sampleID[index]
         r = np.unravel_index(ID, self.imShape)
         im_ = self.im[r[0]:(r[0] + self.WindowSize[0]), r[1]:(r[1] + self.WindowSize[1]),
@@ -125,40 +116,6 @@ class Dataset(data.Dataset):
             l_ = self.l[r[0], (r[1] - self.corePadSize):(r[1] + self.corePadSize + 1),
                         (r[2] - self.corePadSize):(r[2] + self.corePadSize + 1), 0].flatten().astype('int64')
         return im_, l_ if self.l is not None else ID
-
-
-def get_batch(im, l, corePadSize, ID):
-    """ generate a batch from im and l for training
-
-        based on the location of ID entries and core pad size. Note that the ID
-        is based on no core pad.
-    """
-    l_ = np.ndarray(shape=(len(ID), (2 * corePadSize + 1) ** 2, 2), dtype=np.float32)
-    im_ = np.ndarray(shape=(len(ID), WindowSize[0], WindowSize[1], WindowSize[2], WindowSize[3]), dtype=np.float32)
-    for i in range(len(ID)):
-        r = np.unravel_index(ID[i], l.shape)
-        im_[i, :, :, :] = im[r[0]:(r[0] + WindowSize[0]),
-                             r[1]:(r[1] + WindowSize[1]), r[2]:(r[2] + WindowSize[2]), :]
-        l_[i, :, 1] = np.reshape(l[r[0], (r[1] - corePadSize):(r[1] + corePadSize + 1),
-                                 (r[2] - corePadSize):(r[2] + corePadSize + 1), :],
-                                 (2 * corePadSize + 1) ** 2)
-        l_[i, :, 0] = 1 - l_[i, :, 1]
-    return im_, l_
-
-
-def get_batch3d_fwd(im, imShape, ID):
-    """ generate a batch from im for testing
-
-        based on the location of ID entries and core pad size. Note that the ID
-        is based on no core pad.
-    """
-    im_ = np.ndarray(shape=(len(ID), WindowSize[0], WindowSize[1], WindowSize[2]
-                            , WindowSize[3]), dtype=np.float32)
-    for i in range(len(ID)):
-        r = np.unravel_index(ID[i], imShape)
-        im_[i, :, :, :] = im[r[0]:r[0] + WindowSize[0], r[1]:r[1] + WindowSize[1],
-                          r[2]:r[2] + WindowSize[2], r[3]:r[3] + WindowSize[3]]
-    return im_
 
 
 class DeepVess(nn.Module):
@@ -174,14 +131,14 @@ class DeepVess(nn.Module):
             self.activ ,
             nn.Conv3d(32, 32, 3),
             self.activ ,
-            nn.MaxPool3d((1, 2, 2), stride=(1, 2, 2)) #, padding=(0, 1, 1), ceil_mode=True)
+            nn.MaxPool3d((1, 2, 2), stride=(1, 2, 2))
         )
 
         self.conv2 = nn.Sequential(
             nn.Conv2d(32, 64, (3, 3)),
-            self.activ ,
+            self.activ,
             nn.Conv2d(64, 64, (3, 3)),
-            self.activ ,
+            self.activ,
             nn.MaxPool2d((2, 2), stride=(2, 2))
         )
 
@@ -259,12 +216,6 @@ if isTrain and lastEpoch < nEpoch:
     numBatch = np.ceil(train_data.dataset.__len__() / batch_size).astype('int') 
     loss_running = np.ones((numBatch))
     for epoch in range(lastEpoch, nEpoch):
-        # shuffle(trnSampleID)
-        # for i in range(np.int(np.ceil(len(trnSampleID) / batch_size))):
-        #     x1, l1 = get_batch(trn, trnL, corePadSize,
-        #                        trnSampleID[(i * batch_size):((i + 1) * batch_size)])
-        #     x1 = torch.tensor(x1.transpose((0, -1, 1, 2, 3)), dtype=torch.float, requires_grad=False).cuda()
-        #     l1 = torch.tensor(np.argmax(l1, -1), dtype=torch.long, requires_grad=False).cuda()
         model.train()
         train_data = data.DataLoader(Dataset(trn, trnL, trnL.shape, WindowSize, corePadSize, isTrain=True),
                                  batch_size=batch_size)
@@ -317,23 +268,20 @@ if isForward:
     epoch = checkpoint['epoch']
     model.eval()
     print("model-epoch" + str(nEpoch) + ".pt restored.")
-    I = [0, 1, 2]  # [0, int( 2 * corePadSize / 3 + 1), int(4 * corePadSize / 3 + 1)]
+    I = [0, int( 2 * corePadSize / 3 + 1), int(4 * corePadSize / 3 + 1)]
     for offset in [(ii, ij) for ii in I for ij in I]:
         Forward_data = data.DataLoader(Dataset(im, None, imShape, WindowSize, corePadSize, isTrain=False,
                                                offset=offset), batch_size=batch_size)
         numBatch = Forward_data.dataset.__len__() // batch_size + 1
         for i, d in tqdm(enumerate(Forward_data), 'Forward', numBatch):
             x1, vID = d[0].cuda(), d[1]
-        # for i in tqdm(range(numBatch), 'Forward', numBatch):
-        #     x1 = get_batch3d_fwd(im, imShape, vID[i * batch_size:(i + 1) * batch_size])
-        #     x1 = torch.tensor(x1.transpose((0, -1, 1, 2, 3)), dtype=torch.float, requires_grad=False).cuda()
             y1 = np.reshape(np.argmax(model(x1).detach().cpu().numpy(), 1),
                             (-1, (2 * corePadSize + 1), (2 * corePadSize + 1)))
             for j in range(len(vID)):
                 r = np.unravel_index(vID[j], imShape)
                 V[r[0], (r[1] - corePadSize):(r[1] + corePadSize + 1),
                     (r[2] - corePadSize):(r[2] + corePadSize + 1), 0] += y1[j, ...]
-#    V = (V > (np.max(V) / 2))
+    V = (V > (np.max(V) / 2))
     fn = inputData[:-3] + "-epoch" + str(nEpoch) + '-V_fwd.mat'
     io.savemat(fn, {'V': np.transpose(np.reshape(V, imShape[0:3]), (2, 1, 0))})
     print(fn + '- is saved.')
