@@ -1,4 +1,5 @@
-function prepareImage(zStart, isFolder, VesselCh, totalCh, inPath, inFile)
+function prepareImage(zStart, isFolder, VesselCh, totalCh, inPath, ...
+                      inFile, saturated_prctile)
 % extract the vessel channel of a stack, normalize it and save it as 8 bit 
 % image, then remove the motion artifact and save the result as h5 file. 
 %
@@ -15,6 +16,7 @@ function prepareImage(zStart, isFolder, VesselCh, totalCh, inPath, inFile)
 %     VesselCh , totalCh - for cases we have more than one channels.
 %       Otherwise both should be 1. e.g. VesselCh=2 , totalCh=4
 %     inPath - input path to folder of file
+%     saturated_prctile - image normalization saturation prctile [1 98]      
 %
 % Example
 % ---------
@@ -34,11 +36,16 @@ function prepareImage(zStart, isFolder, VesselCh, totalCh, inPath, inFile)
 %       Alzheimer disease mouse models. *arXiv preprint, arXiv*:1801.00880.
 
 % Default input arguments
-if nargin<1
+if nargin < 1
     zStart = 1;
     isFolder = false; 
     VesselCh = 1;   
     totalCh = 1;  
+end
+
+% saturated_prctile
+if nargin < 7
+    saturated_prctile = [1 98];
 end
 
 % extract the file addresses
