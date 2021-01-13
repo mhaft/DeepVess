@@ -50,7 +50,7 @@ if isFolder
     end
     f = dir([PathName, '/*.tif']);
 else
-    if nargin < 4
+    if nargin > 4
         f(1).name = inFile;
         f(1).folder = inPath;
     else
