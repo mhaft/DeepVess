@@ -4,7 +4,7 @@ function [ imOut ] = imNormalize( im, saturated_prctile)
 % Copyright 2015-2018, Mohammad Haft-Javaherian. (mh973@cornell.edu)
 
 if nargin < 2
-    saturated_prctile = [1, 99]; 
+    saturated_prctile = [1, 98]; 
 end
 im = double(im);
 im2 = nonzeros(im .* (~imdilate(im==0, strel('square', 5))));
