@@ -55,7 +55,7 @@ if isFolder
     else
         PathName = uigetdir('*.*', 'Select the folder of raw image (*.tif)');
     end
-    f = dir([PathName, '/*.tif']);
+    f = dir(fullfile(PathName, '/*.tif'));
 else
     if nargin > 4
         f(1).name = inFile;
@@ -66,24 +66,19 @@ else
 end
 
 for i=1:numel(f)
-    inFile = [f(i).folder, '/', f(i).name];
-    outFile = [f(i).folder, '/', 'Ch4-8bit-', f(i).name];
-    h5FileName = [f(i).folder, '/', 'noMotion-', 'Ch4-8bit-', ...
-        f(i).name(1:end-3), 'h5'];
+    inFile = fullfile(f(i).folder, f(i).name);
+    h5FileName = fullfile(f(i).folder, [f(i).name(1:end-3), 'h5']);
     % read multipage tif file
     im = readtif(inFile);
     % extract just vessel slices
     im = im(:, :, VesselCh:totalCh:end); 
     % remove the top layer of the image
     im = im(:, :, zStart:end);
-    im = imNormalize(im);
-    [nr, nc, np] = size(im);
-    % write the normalized vessel channel
-    % writetif(uint8(255 * im), outFile)
-    % remove the motion artifact and save the result
-    % inFile = outFile;
-    % outFile = [h5FileName(1:end-2), 'tif'];
+    im = imNormalize(im, saturated_prctile);
+    
+    % % remove the motion artifact 
     % im = tifMotionRemoval(outFile);
+    
     % shift im to [-0.5,0.5]
     im = single(im);
     im=im / max(im(:)) - 0.5;

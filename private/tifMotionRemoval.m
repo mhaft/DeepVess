@@ -45,17 +45,12 @@ elseif info(1).BitDepth==16
     im=uint16(im);
 end
 
-% read first slice
-im(:,:,1)=imread(inFile,1);
-imwrite(im(:,:,1),outFile,'Compression','none')
-fprintf('%d-',1)
 
 % read other slices and remove the motion based on the previous slice
 for k=2:np
     im(:,:,k)=imread(inFile,k);
     [~,im(:,:,k)]= imregdemons(im(:,:,k),im(:,:,k-1), ...
         [500 400 200],'AccumulatedFieldSmoothing', 1.3, 'DisplayWaitbar', false);
-    imwrite(im(:,:,k),outFile,'WriteMode','append','Compression','none')
     fprintf('%d-',k)
 end
 fprintf('\n')
