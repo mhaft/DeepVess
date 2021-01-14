@@ -44,7 +44,7 @@ from tqdm import tqdm
 
 lr = 1e-4
 # Change isTrain to True if you want to train the network
-isTrain = True
+isTrain = False
 # Change isForward to True if you want to test the network
 isForward = True
 # padSize is the padding around the central voxel to generate the field of view
@@ -53,10 +53,10 @@ WindowSize = np.sum(padSize, axis=1) + 1
 # pad Size around the central voxel to generate 2D region of interest
 corePadSize = 10
 # number of epoch to train
-nEpoch = int(sys.argv[3]) if len(sys.argv) > 3 else 1000
+nEpoch = int(sys.argv[3]) if len(sys.argv) > 3 else 2000
 # The input h5 file location and batch size
 inputData = sys.argv[1] if len(sys.argv) > 1 else input("Enter h5 input file path (e.g. ../a.h5)> ")
-batch_size = int(sys.argv[2]) if len(sys.argv) > 2 else 1000
+batch_size = int(sys.argv[2]) if len(sys.argv) > 2 else 100
 
 # Import Data
 f = h5py.File(inputData, 'r')
@@ -261,7 +261,6 @@ if isTrain and lastEpoch < nEpoch:
 
 
 if isForward:
-    lastEpoch = max([0] + [int(a[11:-3]) for a in glob.glob('model-epoch*.pt')])
     checkpoint = torch.load("model-epoch" + str(nEpoch) + ".pt")
     model.load_state_dict(checkpoint['state_dict'])
     optimizer.load_state_dict(checkpoint['optimizer'])
