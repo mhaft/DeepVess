@@ -22,7 +22,7 @@ Finally, run *postProcess* in MATLAB.
 >> postProcess()
 ```
 
-Note that *prepareImage* and *postProcess* accepts arguments to avoid input request. For more information look at their helps in MATLAB.
+Note that *prepareImage* and *postProcess* accepts arguments to avoid input request. For more information look at their helps in MATLAB. The most important argument is ***saturated_prctile*** that depends on the micrscope. 
  ```matlab
 >> help prepareImage
 >> help postProcess
