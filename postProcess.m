@@ -62,10 +62,10 @@ end
 if nargin<8
     [FileName, PathName] = uigetfile('*.h5', 'Select the image file (*.h5)');
 end
-im = uint8(255*(h5read([PathName, FileName],'/im')+0.5));
+im = uint8(255*(h5read(fullfile(PathName, FileName),'/im')+0.5));
 
 % read the mask image file if exits 
-maskFile = [PathName, FileName(1:end-3), '-masked.tif'];
+maskFile = fullfile(PathName, [FileName(1:end-3), '-masked.tif']);
 if exist(maskFile, 'file')
     mask = readtif(maskFile);
 else
@@ -74,7 +74,7 @@ end
 
 % reading the input files
 FileName = [FileName(1:end-3), '-V_fwd.mat'];
-load([PathName, FileName],'V')
+load(fullfile(PathName, FileName),'V')
 % Apply the mask
 V= V .* single(mask>0);
 disp(FileName)
@@ -231,7 +231,7 @@ for i = 1:size(Skel, 2)
 end
 
 % save results
-save([PathName, 'Analysis--masked-', FileName], 'im', 'Skel', 'C', 'V')
+save(fullfile(PathName, ['Analysis-', FileName]), 'im', 'Skel', 'C', 'V')
 clear FileName 
 
 
