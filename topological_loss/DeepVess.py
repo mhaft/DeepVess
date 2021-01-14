@@ -53,7 +53,7 @@ WindowSize = np.sum(padSize, axis=1) + 1
 # pad Size around the central voxel to generate 2D region of interest
 corePadSize = 10
 # number of epoch to train
-nEpoch = int(sys.argv[3])
+nEpoch = int(sys.argv[3]) if len(sys.argv) > 3 else 1000
 # The input h5 file location and batch size
 inputData = sys.argv[1] if len(sys.argv) > 1 else input("Enter h5 input file path (e.g. ../a.h5)> ")
 batch_size = int(sys.argv[2]) if len(sys.argv) > 2 else 1000
