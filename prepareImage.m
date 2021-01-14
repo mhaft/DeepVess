@@ -1,5 +1,5 @@
 function prepareImage(zStart, isFolder, VesselCh, totalCh, inPath, ...
-                      inFile, saturated_prctile)
+                      inFile, saturated_prctile, isMotion)
 % extract the vessel channel of a stack, normalize it and save it as 8 bit 
 % image, then remove the motion artifact and save the result as h5 file. 
 %
@@ -16,7 +16,8 @@ function prepareImage(zStart, isFolder, VesselCh, totalCh, inPath, ...
 %     VesselCh , totalCh - for cases we have more than one channels.
 %       Otherwise both should be 1. e.g. VesselCh=2 , totalCh=4
 %     inPath - input path to folder of file
-%     saturated_prctile - image normalization saturation prctile [1 98]      
+%     saturated_prctile - image normalization saturation prctile [1 98]    
+%     isMotion - if there is motion and should apply motion removel
 %
 % Example
 % ---------
@@ -42,10 +43,11 @@ if nargin < 1
     VesselCh = 1;   
     totalCh = 1;  
 end
-
-% saturated_prctile
 if nargin < 7
     saturated_prctile = [1 98];
+end
+if nargin < 8
+    isMotion = false;
 end
 
 % extract the file addresses
@@ -75,19 +77,17 @@ for i=1:numel(f)
     % remove the top layer of the image
     im = im(:, :, zStart:end);
     im = imNormalize(im, saturated_prctile);
-    
-    % % remove the motion artifact 
-    % im = tifMotionRemoval(outFile);
-    
+    % remove the motion artifact 
+    if isMotion
+    	im = tifMotionRemoval(outFile);
+    end
     % shift im to [-0.5,0.5]
     im = single(im);
     im=im / max(im(:)) - 0.5;
-
     % write h5 file
     if exist(h5FileName,'file')
         delete(h5FileName)
     end
-
     h5create(h5FileName, '/im', size(im), 'Datatype', 'single')
     h5write(h5FileName, '/im', im)
 end
