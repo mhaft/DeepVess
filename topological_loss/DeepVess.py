@@ -56,7 +56,7 @@ corePadSize = 10
 nEpoch = int(sys.argv[3]) if len(sys.argv) > 3 else 2000
 # The input h5 file location and batch size
 inputData = sys.argv[1] if len(sys.argv) > 1 else input("Enter h5 input file path (e.g. ../a.h5)> ")
-batch_size = int(sys.argv[2]) if len(sys.argv) > 2 else 100
+batch_size = int(sys.argv[2]) if len(sys.argv) > 2 else 500
 
 # Import Data
 f = h5py.File(inputData, 'r')
@@ -280,7 +280,7 @@ if isForward:
                 r = np.unravel_index(vID[j], imShape)
                 V[r[0], (r[1] - corePadSize):(r[1] + corePadSize + 1),
                     (r[2] - corePadSize):(r[2] + corePadSize + 1), 0] += y1[j, ...]
-    V = (V > (np.max(V) / 2))
+    V = (V > (len(I) ** 2 // 2))
     fn = inputData[:-3] + "-epoch" + str(nEpoch) + '-V_fwd.mat'
     io.savemat(fn, {'V': np.transpose(np.reshape(V, imShape[0:3]), (2, 1, 0))})
     print(fn + '- is saved.')
