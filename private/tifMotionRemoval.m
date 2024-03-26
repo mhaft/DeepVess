@@ -27,10 +27,10 @@ function im = tifMotionRemoval(inFile)
 % Copyright 2015-2018, Mohammad Haft-Javaherian. (mh973@cornell.edu)
 
 % If inFile is not in argin
-if nargin<1    
+if nargin < 1
     [FileName,PathName] = uigetfile('*.*','Image with motion (*.tif)');
-    inFile=[PathName,FileName];
-    outFile=[PathName,'noMotion-',FileName];
+    inFile = [PathName,FileName];
+    outFile = [PathName,'noMotion-',FileName];
 end
 % get the inFile info from the tif file header
 info=imfinfo(inFile);

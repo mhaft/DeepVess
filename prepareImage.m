@@ -79,6 +79,7 @@ for i=1:numel(f)
     im = imNormalize(im, saturated_prctile);
     % remove the motion artifact 
     if isMotion
+        outFile = [f(i).folder, 'noMotion-', f(i).name];
     	im = tifMotionRemoval(outFile);
     end
     % shift im to [-0.5,0.5]
