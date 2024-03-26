@@ -224,7 +224,7 @@ if isTrain:
     x_tst, l_tst = get_batch(tst, tstL, corePadSize, tstSampleID[0:batch_size])
     for epoch in range(nEpoch):
         shuffle(trnSampleID)
-        for i in range(np.int(np.ceil(len(trnSampleID) / batch_size))):
+        for i in range(int(np.ceil(len(trnSampleID) / batch_size))):
             x1, l1 = get_batch(trn, trnL, corePadSize,
                                trnSampleID[(i * batch_size):((i + 1) * batch_size)])
             train_step.run(feed_dict={x: x1, y_: l1, keep_prob: 0.5})
@@ -260,7 +260,7 @@ if isForward:
                                      2 * corePadSize + 1), [V.shape[2] - corePadSize - 1]):
                 vID.append(np.ravel_multi_index((ii, ij, ik, 0), V.shape))
     start = time.time()
-    for i in range(np.int(np.ceil(len(vID) / batch_size))):
+    for i in range(int(np.ceil(len(vID) / batch_size))):
         x1 = get_batch3d_fwd(im, imShape, vID[i * batch_size:(i + 1) * batch_size])
         y1 = np.reshape(y_conv.eval(feed_dict={x: x1, keep_prob: 1.0}), (-1,
                                                                          (2 * corePadSize + 1), (2 * corePadSize + 1),
@@ -273,7 +273,7 @@ if isForward:
             end = time.time()
             print("step %d is done.  %f min to finish." % (i, (end - start)
                                                            / 60 / (i + 1) * (
-                                                                       np.int(np.ceil(len(vID) / batch_size)) - i - 1)))
+                                                                       int(np.ceil(len(vID) / batch_size)) - i - 1)))
     io.savemat(inputData[:-3] + '-V_fwd.mat', {'V': np.transpose(np.reshape(V,
                                                                           imShape[0:3]), (2, 1, 0))})
     print(inputData[:-3] + '-V_fwd.mat is saved.')
